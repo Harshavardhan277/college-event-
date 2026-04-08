@@ -1,0 +1,177 @@
+{% extends 'stu_layout.html' %}
+
+{% block student_content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-slate-900">Discover Events</h1>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </span>
+            <input type="text" id="eventSearch" placeholder="Search events, clubs..." 
+                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-3">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</p>
+                <div class="flex flex-wrap gap-2" id="statusFilter">
+                    <button onclick="setFilter('status', 'all')" class="status-btn active px-4 py-1.5 rounded-full font-bold text-sm shadow-sm transition-all border border-transparent bg-slate-900 text-white">All</button>
+                    <button onclick="setFilter('status', 'Upcoming')" class="status-btn px-4 py-1.5 rounded-full font-bold text-sm bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 transition-all">Upcoming</button>
+                    <button onclick="setFilter('status', 'Ongoing')" class="status-btn px-4 py-1.5 rounded-full font-bold text-sm bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 transition-all">Ongoing</button>
+                    <button onclick="setFilter('status', 'Completed')" class="status-btn px-4 py-1.5 rounded-full font-bold text-sm bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 transition-all">Completed</button>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Category</p>
+                <div class="flex flex-wrap gap-2" id="categoryFilter">
+                    <button onclick="setFilter('category', 'all')" class="cat-btn active px-4 py-1.5 rounded-full font-bold text-sm shadow-sm transition-all border border-transparent bg-slate-900 text-white">All</button>
+                    <button onclick="setFilter('category', 'EE Credits')" class="cat-btn px-4 py-1.5 rounded-full font-bold text-sm bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 transition-all">EE Credits</button>
+                    <button onclick="setFilter('category', 'Group 2')" class="cat-btn px-4 py-1.5 rounded-full font-bold text-sm bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 transition-all">Group 2</button>
+                    <button onclick="setFilter('category', 'Group 3')" class="cat-btn px-4 py-1.5 rounded-full font-bold text-sm bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 transition-all">Group 3</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="eventsGrid">
+        {% for event in events %}
+        <div class="event-card bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow flex flex-col md:flex-row" 
+             data-category="{{ event.category | default('Experimental') }}"
+             data-status="{{ event.status | default('Upcoming') }}">
+            <div class="w-full md:w-48 h-48 md:h-auto bg-slate-100 flex-shrink-0 relative">
+                {% if event.poster %}
+                <img src="{{ url_for('static', filename='uploads/events/' + event.poster) }}"
+                    alt="{{ event.title }}" class="w-full h-full object-cover">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center bg-indigo-50">
+                    <i class="fa-solid fa-calendar-days text-3xl text-indigo-200"></i>
+                </div>
+                {% endif %}
+                {% if event.is_full %}
+                <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center">
+                    <span class="px-3 py-1 bg-white/20 border border-white/30 text-white text-[10px] font-bold uppercase rounded-full tracking-widest">Registration Closed</span>
+                </div>
+                {% endif %}
+            </div>
+            <div class="p-5 flex flex-col flex-grow">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded tracking-widest uppercase category-badge">
+                            {{ event.category | default('Experimental') }}
+                        </span>
+                        <span class="text-[9px] font-bold px-2 py-1 rounded tracking-widest uppercase 
+                            {% if event.status == 'Upcoming' %}bg-blue-50 text-blue-600{% elif event.status == 'Ongoing' %}bg-green-50 text-green-600{% else %}bg-slate-100 text-slate-500{% endif %}">
+                            {{ event.status }}
+                        </span>
+                    </div>
+                    <span class="text-xs font-bold text-slate-400">{{ event.event_date }}</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 event-title">{{ event.title }}</h3>
+                <div class="flex items-center justify-between mt-1">
+                    <p class="text-sm font-medium text-slate-500">By {{ event.club_name }}</p>
+                    <span class="text-[11px] font-bold {% if event.slots_remaining < 5 %}text-red-500{% else %}text-slate-400{% endif %}">
+                        {{ event.slots_remaining }} slots left
+                    </span>
+                </div>
+
+                <div class="mt-4 flex items-center space-x-2">
+                    <span class="text-xs font-bold px-2 py-1 bg-green-50 text-green-700 rounded-md">Free</span>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-100 flex items-center gap-3 mt-auto">
+                    {% if event.is_registered %}
+                    <button disabled class="flex-1 px-4 py-2.5 bg-green-50 text-green-600 text-sm font-bold rounded-xl cursor-default flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> Already Enrolled
+                    </button>
+                    {% elif not event.is_full and event.status != 'Completed' %}
+                    <a href="{{ url_for('stu.register_event', event_id=event.id) }}" 
+                       class="flex-1 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-slate-100 text-center">
+                       Register Now
+                    </a>
+                    {% else %}
+                    <button disabled class="flex-1 px-4 py-2.5 bg-slate-100 text-slate-400 text-sm font-bold rounded-xl cursor-not-allowed">Closed</button>
+                    {% endif %}
+                    
+                    {% if event.whatsapp_link %}
+                    <a href="{{ event.whatsapp_link }}" target="_blank"
+                        class="px-3 py-2.5 bg-[#25D366] hover:bg-[#1ebe5b] text-white rounded-xl transition-all flex items-center justify-center shadow-lg shadow-green-100 group">
+                        <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                        </svg>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .status-btn.active, .cat-btn.active {
+        background-color: #0f172a; /* bg-slate-900 */
+        color: white;
+        border-color: transparent;
+    }
+</style>
+
+<script>
+    let currentFilters = {
+        status: 'all',
+        category: 'all'
+    };
+
+    function setFilter(type, value) {
+        currentFilters[type] = value;
+        
+        // Update button styles
+        const btns = document.querySelectorAll(`.${type}-btn`);
+        btns.forEach(btn => {
+            btn.classList.remove('active', 'bg-slate-900', 'text-white');
+            btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+        });
+        
+        // Match by text for simplicity in this demo, or use data attributes
+        const activeBtn = Array.from(btns).find(btn => {
+            if (value === 'all') return btn.innerText.trim() === 'All';
+            return btn.innerText.trim() === value;
+        });
+
+        if (activeBtn) {
+            activeBtn.classList.add('active', 'bg-slate-900', 'text-white');
+            activeBtn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
+        }
+
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const query = document.getElementById('eventSearch').value.toLowerCase();
+        const cards = document.querySelectorAll('.event-card');
+        
+        cards.forEach(card => {
+            const catMatch = currentFilters.category === 'all' || card.dataset.category === currentFilters.category;
+            const statMatch = currentFilters.status === 'all' || card.dataset.status === currentFilters.status;
+            const titleMatch = card.querySelector('.event-title').innerText.toLowerCase().includes(query);
+
+            if (catMatch && statMatch && titleMatch) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // Search filter
+    document.getElementById('eventSearch').addEventListener('input', applyFilters);
+</script>
+{% endblock %}

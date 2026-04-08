@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}HOD Dashboard - CEAM{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div>
+        <h1 class="text-3xl font-extrabold text-slate-900">Event Approvals</h1>
+        <p class="text-slate-500 mt-1">Review and authorize department event requests</p>
+    </div>
+
+    <!-- Approval Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Pending</p>
+            <p class="text-3xl font-bold text-amber-600 mt-2">5</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Approved</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">12</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Rejected</p>
+            <p class="text-3xl font-bold text-red-600 mt-2">2</p>
+        </div>
+    </div>
+
+    <!-- Pending Table -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-50">
+            <h2 class="text-lg font-bold text-slate-900">Awaiting Review</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Event Name</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Club</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <p class="text-sm font-bold text-slate-900">Code Hackathon 2026</p>
+                            <p class="text-xs text-slate-500">2-day coding marathon</p>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-600 font-medium">Coding Club</td>
+                        <td class="px-6 py-4 text-sm text-slate-600 font-medium">March 25, 2026</td>
+                        <td class="px-6 py-4">
+                            <div class="flex space-x-2">
+                                <button
+                                    class="px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-700 transition-colors">Approve</button>
+                                <button
+                                    class="px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-colors">Reject</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

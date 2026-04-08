@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Registration - CEAM{% endblock %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center py-12">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl border border-slate-100">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-slate-900 leading-tight">Join the Network</h1>
+            <p class="text-slate-500 mt-2">Create your student account to access events</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.register') }}" class="space-y-6">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Registration Number -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Register Number</label>
+                    <input type="text" name="register_number" required
+                        inputmode="numeric" pattern="[0-9]*"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none bg-slate-50"
+                        placeholder="e.g. 99240040193">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">College Email</label>
+                    <input type="email" name="email" required
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none bg-slate-50"
+                        placeholder="student@college.edu">
+                </div>
+            </div>
+
+            <!-- OTP Section (JavaScript handled) -->
+            <div id="otp-section" class="flex items-end space-x-3">
+                <div class="flex-1 hidden" id="otp-input-group">
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Enter OTP sent to email</label>
+                    <input type="text" name="otp" id="otp-input"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all outline-none bg-slate-50 text-center tracking-widest text-lg font-bold"
+                        maxlength="6" placeholder="------">
+                </div>
+                <button type="button" id="send-otp-btn"
+                    class="px-6 py-3 bg-indigo-100 text-indigo-700 font-bold rounded-xl hover:bg-indigo-200 transition-colors w-full sm:w-auto">
+                    Send OTP Verification
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                <!-- Password -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Password</label>
+                    <input type="password" name="password" required minlength="6"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none bg-slate-50"
+                        placeholder="••••••••">
+                </div>
+
+                <!-- Confirm Password -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Confirm Password</label>
+                    <input type="password" name="confirm_password" required minlength="6"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none bg-slate-50"
+                        placeholder="••••••••">
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn" disabled
+                class="w-full mt-8 py-4 px-6 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                Complete Registration
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p class="text-sm text-slate-500">
+                Already have an account?
+                <a href="{{ url_for('auth.login') }}"
+                    class="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">Sign in instead</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const sendOtpBtn = document.getElementById('send-otp-btn');
+    const otpInputGroup = document.getElementById('otp-input-group');
+    const submitBtn = document.getElementById('submit-btn');
+    const emailInput = document.querySelector('input[name="email"]');
+    const otpInput = document.getElementById('otp-input');
+
+    sendOtpBtn.addEventListener('click', async () => {
+        const email = emailInput.value;
+        if (!email) {
+            alert("Please enter your email first.");
+            return;
+        }
+
+        sendOtpBtn.disabled = true;
+        sendOtpBtn.innerHTML = "Sending...";
+
+        try {
+            const response = await fetch("{{ url_for('auth.send_otp') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: email })
+            });
+
+            if (response.ok) {
+                sendOtpBtn.innerHTML = "OTP Sent ✓";
+                otpInputGroup.classList.remove('hidden');
+                submitBtn.disabled = false; // For demonstration. In reality, you'd only enable after successful OTP verification.
+            } else {
+                alert("Failed to send OTP.");
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.innerHTML = "Send OTP";
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            sendOtpBtn.disabled = false;
+            sendOtpBtn.innerHTML = "Send OTP";
+        }
+    });
+</script>
+{% endblock %}

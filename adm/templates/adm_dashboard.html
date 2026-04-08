@@ -1,0 +1,95 @@
+{% extends 'adm_layout.html' %}
+
+{% block title %}Dashboard - Admin Portal{% endblock %}
+{% block header_title %}System Overview{% endblock %}
+{% block header_subtitle %}Real-time statistics and management summary.{% endblock %}
+
+{% block content %}
+<!-- Quick Actions Section -->
+<div class="mb-12 bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
+    <h3 class="text-xl font-bold text-[#0066ff] mb-8 tracking-tight">Quick Actions</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Add New Club Card -->
+        <a href="{{ url_for('adm.manage_clubs') }}" class="flex flex-col items-center justify-center p-12 bg-[#0066ff] rounded-[2.5rem] hover:bg-[#0052cc] transition-all shadow-xl shadow-blue-100 hover:scale-[1.02] active:scale-[0.98] group">
+            <i class="fa-solid fa-plus text-5xl text-white mb-5"></i>
+            <span class="text-white text-xl font-extrabold tracking-tight">Add New Club</span>
+            <p class="text-white/70 text-sm mt-2 font-medium">Create a new organizational entity</p>
+        </a>
+
+        <!-- Create Coordinator Card -->
+        <a href="{{ url_for('adm.create_coordinator') }}" class="flex flex-col items-center justify-center p-12 bg-white border-2 border-[#10b981] rounded-[2.5rem] hover:bg-emerald-50 transition-all shadow-xl shadow-emerald-50 hover:scale-[1.02] active:scale-[0.98] group">
+            <i class="fa-solid fa-user-plus text-5xl text-[#10b981] mb-5"></i>
+            <span class="text-[#059669] text-xl font-extrabold tracking-tight">Create Coordinator</span>
+            <p class="text-[#10b981]/70 text-sm mt-2 font-medium">Authorize a new club administrator</p>
+        </a>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+    <!-- Clubs Card -->
+    <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 flex flex-col justify-between group hover:border-indigo-200 transition-all">
+        <div class="flex justify-between items-start mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-all">
+                <i class="fa-solid fa-layer-group text-xl"></i>
+            </div>
+            <div class="text-right">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Clubs</div>
+                <div class="text-3xl font-extrabold text-slate-900">{{ stats.clubs }}</div>
+            </div>
+        </div>
+        <a href="{{ url_for('adm.manage_clubs') }}" class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest flex items-center hover:opacity-70 transition-opacity">
+            Manage Clubs <i class="fa-solid fa-arrow-right ml-2 text-[8px]"></i>
+        </a>
+    </div>
+
+    <!-- Coordinators Card -->
+    <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 flex flex-col justify-between group hover:border-emerald-200 transition-all">
+        <div class="flex justify-between items-start mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-all">
+                <i class="fa-solid fa-user-gear text-xl"></i>
+            </div>
+            <div class="text-right">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Coordinators</div>
+                <div class="text-3xl font-extrabold text-slate-900">{{ stats.coordinators }}</div>
+            </div>
+        </div>
+        <a href="{{ url_for('adm.create_coordinator') }}" class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest flex items-center hover:opacity-70 transition-opacity">
+            Add New <i class="fa-solid fa-plus ml-2 text-[8px]"></i>
+        </a>
+    </div>
+
+    <!-- HODs Card -->
+    <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 flex flex-col justify-between group hover:border-amber-200 transition-all">
+        <div class="flex justify-between items-start mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-amber-50 group-hover:text-amber-600 transition-all">
+                <i class="fa-solid fa-user-tie text-xl"></i>
+            </div>
+            <div class="text-right">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">HODs / Deans</div>
+                <div class="text-3xl font-extrabold text-slate-900">{{ stats.hods }}</div>
+            </div>
+        </div>
+        <a href="{{ url_for('adm.create_hod') }}" class="text-[10px] font-bold text-amber-600 uppercase tracking-widest flex items-center hover:opacity-70 transition-opacity">
+            Add New <i class="fa-solid fa-plus ml-2 text-[8px]"></i>
+        </a>
+    </div>
+
+    <!-- Students Card -->
+    <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 flex flex-col justify-between group hover:border-rose-200 transition-all">
+        <div class="flex justify-between items-start mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-rose-50 group-hover:text-rose-600 transition-all">
+                <i class="fa-solid fa-graduation-cap text-xl"></i>
+            </div>
+            <div class="text-right">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Students</div>
+                <div class="text-3xl font-extrabold text-slate-900">{{ stats.students }}</div>
+            </div>
+        </div>
+        <a href="{{ url_for('adm.manage_users') }}" class="text-[10px] font-bold text-rose-600 uppercase tracking-widest flex items-center hover:opacity-70 transition-opacity">
+            Manage Users <i class="fa-solid fa-users-gear ml-2 text-[8px]"></i>
+        </a>
+    </div>
+</div>
+
+
+{% endblock %}

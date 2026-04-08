@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "C:\Users\naras\OneDrive\Desktop\SE Project\app.py", line 26, in <module>
+    from auth_routes import auth_bp
+  File "C:\Users\naras\OneDrive\Desktop\SE Project\auth_routes.py", line 3, in <module>
+    from models import User
+  File "C:\Users\naras\OneDrive\Desktop\SE Project\models.py", line 2, in <module>
+    from app import mongo, login_manager, bcrypt
+  File "C:\Users\naras\OneDrive\Desktop\SE Project\app.py", line 26, in <module>
+    from auth_routes import auth_bp
+ImportError: cannot import name 'auth_bp' from 'auth_routes' (consider renaming 'C:\\Users\\naras\\OneDrive\\Desktop\\SE Project\\auth_routes.py' if it has the same name as a library you intended to import)

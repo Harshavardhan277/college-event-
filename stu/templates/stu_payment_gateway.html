@@ -1,0 +1,79 @@
+{% extends 'stu_layout.html' %}
+
+{% block student_content %}
+<div class="max-w-2xl mx-auto py-8">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="p-8 bg-gradient-to-br from-indigo-600 to-indigo-800 text-white text-center">
+            <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-md">
+                <i class="fa-solid fa-credit-card text-2xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold">Event Payment</h1>
+            <p class="text-indigo-100 mt-1 opacity-90 text-sm">Securely register for the event</p>
+        </div>
+
+        <div class="p-8 space-y-8">
+            <!-- Event Summary -->
+            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Event</p>
+                    <h2 class="text-lg font-bold text-slate-900">{{ event.title }}</h2>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Amount</p>
+                    <p class="text-xl font-extrabold text-indigo-600">₹ {{ "%.2f"|format(reg.amount) }}</p>
+                </div>
+            </div>
+
+            <!-- Payment Instructions -->
+            <div class="space-y-6">
+                <div class="text-center">
+                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Scan to Pay</h3>
+                    <div class="w-64 h-64 mx-auto bg-white border-2 border-slate-100 rounded-2xl p-2 shadow-sm flex items-center justify-center overflow-hidden">
+                        {% if event.payment_qr %}
+                        <img src="{{ url_for('static', filename='uploads/payments/' + event.payment_qr) }}" 
+                             alt="Payment QR" class="w-full h-full object-contain">
+                        {% else %}
+                        <div class="text-center p-4">
+                            <i class="fa-solid fa-qrcode text-slate-200 text-4xl mb-2"></i>
+                            <p class="text-xs text-slate-400 font-medium whitespace-normal">Contact Coordinator for QR</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Guidance -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-amber-50 rounded-xl border border-amber-100 flex items-start space-x-3">
+                        <i class="fa-solid fa-circle-info text-amber-500 mt-1"></i>
+                        <p class="text-xs text-amber-800 font-medium leading-relaxed">
+                            Scan the QR code using any UPI app (GPay, PhonePe, etc.) and complete the payment.
+                        </p>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-xl border border-blue-100 flex items-start space-x-3">
+                        <i class="fa-solid fa-camera text-blue-500 mt-1"></i>
+                        <p class="text-xs text-blue-800 font-medium leading-relaxed">
+                            After payment, note down the **Transaction ID** from your payment app.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Verification Form -->
+                <form action="{{ url_for('stu.confirm_payment', reg_id=reg.id) }}" method="POST" class="space-y-4 pt-4 border-t border-slate-100">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Payment Transaction ID</label>
+                        <input type="text" name="transaction_id" required placeholder="e.g. 123456789012"
+                               class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-mono text-sm">
+                    </div>
+                    <button type="submit" class="w-full py-4 bg-indigo-600 hover:bg-slate-900 text-white font-extrabold rounded-2xl shadow-xl shadow-indigo-100 transition-all transform active:scale-[0.98]">
+                        Confirm My Enrollment
+                    </button>
+                    <p class="text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                        Your seat will be confirmed once verified
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

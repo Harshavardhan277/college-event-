@@ -1,0 +1,78 @@
+{% extends 'adm_layout.html' %}
+
+{% block title %}User Details - Admin Pro{% endblock %}
+{% block header_title %}Account Profile{% endblock %}
+{% block header_subtitle %}Detailed view of authorized system member.{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-[3rem] p-12 shadow-sm border border-slate-100">
+        <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-12 mb-12">
+            <div class="w-32 h-32 rounded-[2.5rem] bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-2xl shadow-indigo-100">
+                <span class="text-4xl font-black">{{ user.name[:1] }}</span>
+            </div>
+            <div class="text-center md:text-left pt-2">
+                <div class="flex flex-col md:flex-row md:items-center md:space-x-4 mb-2">
+                    <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ user.name }}</h3>
+                    <span class="px-4 py-1.5 bg-indigo-600 text-white text-[10px] font-extrabold rounded-full uppercase tracking-widest mt-2 md:mt-0 inline-block w-fit mx-auto md:mx-0">
+                        {{ user.role }}
+                    </span>
+                </div>
+                <p class="text-slate-400 font-bold text-sm tracking-wide">@{{ user.username }} • {{ user.status|default('Active')|capitalize }} Member</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 border-t border-slate-50 pt-12">
+            <div>
+                <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6">General Information</h4>
+                <div class="space-y-6">
+                    <div class="flex flex-col">
+                        <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Full Name</span>
+                        <span class="text-sm font-extrabold text-slate-700">{{ user.name }}</span>
+                    </div>
+                    {% if user.email and user.email != '-' %}
+                    <div class="flex flex-col">
+                        <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Email Address</span>
+                        <span class="text-sm font-extrabold text-slate-700">{{ user.email }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="flex flex-col">
+                        <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Account Type</span>
+                        <span class="text-sm font-extrabold text-slate-700">{{ user.role }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6">System Identity</h4>
+                <div class="space-y-6">
+                    <div class="flex flex-col">
+                        <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Department / Affiliation</span>
+                        <span class="text-sm font-extrabold text-indigo-600">{{ user.dept or user.club or 'Academic General' }}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Record Status</span>
+                        <div class="flex items-center space-x-2 mt-1">
+                            <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                            <span class="text-xs font-black text-slate-900 uppercase tracking-widest">{{ user.status|default('Active') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-16 flex flex-col md:flex-row md:items-center justify-between p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100">
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6 md:mb-0">Security and record adjustments are available through the management portal.</p>
+            <div class="flex space-x-3">
+                <a href="{{ url_for('adm.change_password', user_type=user_type, user_id=user_id) }}" class="px-6 py-3 bg-white text-slate-900 text-[10px] font-bold rounded-xl border border-slate-200 hover:bg-amber-500 hover:text-white transition-all shadow-sm">
+                    Reset Password
+                </a>
+                <a href="{{ url_for('adm.manage_users') }}" class="px-6 py-3 bg-slate-900 text-white text-[10px] font-bold rounded-xl hover:bg-black transition-all shadow-lg shadow-slate-200">
+                    Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+ Joseph

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - CEAM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url("{{ url_for('static', filename='images/login_bgs/student_campus_bg.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .login-card {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-[380px]">
+        <div class="login-card p-8">
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm border border-indigo-100">
+                    <i class="fa-solid fa-graduation-cap text-indigo-600 text-xl"></i>
+                </div>
+                <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Student Login</h1>
+                <p class="text-slate-500 text-[10px] mt-1 uppercase tracking-widest font-semibold">Official Portal</p>
+            </div>
+
+            <form action="{{ url_for('stu.login') }}" method="POST" class="space-y-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="p-3 rounded-xl text-[11px] font-bold text-center
+                                {% if category == 'success' %}
+                                    bg-green-50 border border-green-100 text-green-600
+                                {% else %}
+                                    bg-red-50 border border-red-100 text-red-600
+                                {% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-bold text-slate-700 ml-1">Register Number</label>
+                    <input type="text" name="username" placeholder="e.g. 22CS067" required
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none bg-slate-50 text-sm font-medium">
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-bold text-slate-700 ml-1">Password</label>
+                    <input type="password" name="password" placeholder="••••••••" required
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none bg-slate-50 text-sm font-medium">
+                </div>
+
+                <div class="flex items-center justify-between px-1">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox"
+                            class="h-3.5 w-3.5 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-[10px] font-semibold text-slate-500">Remember me</label>
+                    </div>
+                    <a href="{{ url_for('auth.forgot_password') }}"
+                        class="text-[10px] font-bold text-indigo-600 hover:text-indigo-500 transition-colors">Forgot password?</a>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-3.5 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 transition-all transform active:scale-[0.98] text-[10px] uppercase tracking-widest">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-6 pt-5 border-t border-slate-100 text-center space-y-3">
+                <p class="text-[11px] font-semibold text-slate-400">
+                    Don't have an account?
+                    <a href="{{ url_for('stu.register') }}"
+                        class="text-indigo-600 hover:text-indigo-500 transition-colors">Create Account</a>
+                </p>
+                {% if current_user.is_authenticated %}
+                <div class="pt-1">
+                    <a href="{{ url_for('stu.dashboard') }}"
+                       class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-gauge text-[9px]"></i>
+                        Go to Dashboard
+                    </a>
+                </div>
+                {% endif %}
+                <div class="pt-1">
+                    <a href="{{ url_for('index') }}" 
+                       class="text-[11px] font-bold text-slate-300 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-left text-[9px]"></i>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <p class="text-center mt-6 text-white/40 text-[9px] font-bold uppercase tracking-widest">
+            &copy; 2026 CEAM • STUDENT AFFAIRS
+        </p>
+    </div>
+</body>
+</html>

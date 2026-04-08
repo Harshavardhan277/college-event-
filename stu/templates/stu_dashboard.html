@@ -1,0 +1,97 @@
+{% extends 'stu_layout.html' %}
+
+{% block student_content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">Welcome back, {{ current_user.name |
+                default(current_user.username, true) }}!</h1>
+            <p class="text-slate-500 mt-1">Here's what's happening on campus today.</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-indigo-600 rounded-2xl p-6 text-white shadow-lg shadow-indigo-100 relative overflow-hidden">
+            <div class="absolute right-0 top-0 opacity-10">
+                <svg class="w-32 h-32 -mt-6 -mr-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-11v6h2v-6h-2zm0-4v2h2V7h-2z" />
+                </svg>
+            </div>
+            <p class="text-indigo-100 font-medium text-sm">Upcoming Events</p>
+            <p class="text-4xl font-extrabold mt-2">{{ upcoming_events }}</p>
+            <a href="{{ url_for('stu.events') }}"
+                class="inline-flex items-center text-sm font-bold text-white mt-4 hover:underline">View all <svg
+                    class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg></a>
+        </div>
+        <div class="bg-orange-500 rounded-2xl p-6 text-white shadow-lg shadow-orange-100 relative overflow-hidden">
+            <p class="text-orange-100 font-medium text-sm">Total Participated</p>
+            <p class="text-4xl font-extrabold mt-2">{{ participation_count | default(0) }}</p>
+            <div class="mt-4 text-xs font-bold opacity-80 uppercase">Events Attended</div>
+        </div>
+    </div>
+
+    <!-- Event Participation by Category -->
+    <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 flex items-center">
+            <span class="w-2 h-2 bg-indigo-600 rounded-full mr-2"></span>
+            Event Participation by Category
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- EE Credits Card -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col items-center">
+                <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <p class="text-slate-500 font-bold text-sm uppercase tracking-wider">EE Credits</p>
+                <p class="text-4xl font-extrabold text-orange-600 mt-2">{{ current_user.ee_credits | default(0) }} / 8</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase mt-2">Events registered</p>
+            </div>
+
+            <!-- Group 2 Card -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col items-center">
+                <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <p class="text-slate-500 font-bold text-sm uppercase tracking-wider">Group 2</p>
+                <p class="text-4xl font-extrabold text-indigo-600 mt-2">{{ current_user.group2_credits | default(0) }} / 7</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase mt-2">Events registered</p>
+            </div>
+
+            <!-- Group 3 Card -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col items-center">
+                <div class="w-12 h-12 bg-pink-100 text-pink-600 rounded-xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <p class="text-slate-500 font-bold text-sm uppercase tracking-wider">Group 3</p>
+                <p class="text-4xl font-extrabold text-pink-600 mt-2">{{ current_user.group3_credits | default(0) }} / 7</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase mt-2">Events registered</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity / Upcoming -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-4">Your Schedule</h2>
+
+        <div class="space-y-4">
+            <!-- Empty State -->
+            <div class="flex flex-col items-center justify-center p-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-center">
+                <div class="w-12 h-12 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center mb-3">
+                    <i class="fa-solid fa-calendar-day text-slate-300"></i>
+                </div>
+                <p class="text-sm font-bold text-slate-400 uppercase tracking-widest italic">No Upcoming Schedule</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

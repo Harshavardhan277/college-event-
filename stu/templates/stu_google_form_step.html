@@ -1,0 +1,84 @@
+{% extends 'stu_layout.html' %}
+
+{% block student_content %}
+<div class="max-w-xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div>
+        <h1 class="text-2xl font-extrabold text-slate-900">Step 1 of 2 — Fill the Registration Form</h1>
+        <p class="text-slate-500 mt-1 text-sm">You must fill and submit the Google Form before proceeding to payment.</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2">
+            <div class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">1</div>
+            <span class="text-xs font-bold text-indigo-600">Fill Form</span>
+        </div>
+        <div class="flex-1 h-0.5 bg-slate-200"></div>
+        <div class="flex items-center space-x-2">
+            <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center text-xs font-bold">2</div>
+            <span class="text-xs font-bold text-slate-400">Payment</span>
+        </div>
+    </div>
+
+    <!-- Event Info Card -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex items-center space-x-4">
+        {% if event.poster %}
+        <img src="{{ url_for('static', filename='uploads/events/' + event.poster) }}" alt="Poster"
+             class="w-16 h-16 rounded-xl object-cover border border-slate-100 shrink-0">
+        {% else %}
+        <div class="w-16 h-16 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-calendar-days text-2xl text-indigo-200"></i>
+        </div>
+        {% endif %}
+        <div>
+            <div class="font-extrabold text-slate-900 text-lg">{{ event.title }}</div>
+            <div class="text-sm text-slate-400 font-medium">{{ event.club_name }} · {{ event.event_date }}</div>
+        </div>
+    </div>
+
+    <!-- Google Form Instruction Card -->
+    <div class="bg-indigo-50 rounded-2xl border border-indigo-100 p-6 space-y-4">
+        <div class="flex items-start space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shrink-0">
+                <i class="fa-brands fa-google text-white text-sm"></i>
+            </div>
+            <div>
+                <div class="font-bold text-slate-900">Registration Form Required</div>
+                <p class="text-sm text-slate-600 mt-1 leading-relaxed">
+                    This event requires you to fill a Google Form before payment. Click the button below to open the form in a new tab. After submitting the form, come back here and click <strong>"I've Submitted the Form"</strong>.
+                </p>
+            </div>
+        </div>
+
+        <a href="{{ event.google_form_link }}" target="_blank"
+           class="flex items-center justify-center w-full py-3 px-5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-100">
+            <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>
+            Open Google Form (New Tab)
+        </a>
+    </div>
+
+    <!-- Confirmation Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+        <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-circle-info text-slate-400 mt-0.5"></i>
+            <p class="text-sm text-slate-500 leading-relaxed">
+                By clicking the button below, you confirm that you have <strong>filled and submitted</strong> the Google Form. Your registration will be saved and you will be taken to complete payment.
+            </p>
+        </div>
+
+        <a href="{{ url_for('stu.payment', reg_id=reg.id) }}"
+           class="flex items-center justify-center w-full py-3.5 px-5 bg-slate-900 hover:bg-slate-700 text-white text-sm font-bold rounded-xl transition-all">
+            <i class="fa-solid fa-check mr-2"></i>
+            I've Submitted the Form — Proceed to Payment
+        </a>
+
+        <a href="{{ url_for('stu.events') }}"
+           class="block text-center text-xs text-slate-400 hover:text-red-500 transition-colors font-medium pt-1">
+            Cancel Registration
+        </a>
+    </div>
+
+</div>
+{% endblock %}

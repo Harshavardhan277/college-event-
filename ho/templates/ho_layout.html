@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HOD / Dean Portal{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[#1e293b] text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700/50">
+                <h1 class="text-xl font-bold tracking-tight">HoD / Dean</h1>
+            </div>
+            
+            <div class="p-6">
+                <div class="flex items-center space-x-3 mb-8">
+                    <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center">
+                        <i class="fa-solid fa-user-tie text-slate-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-white leading-tight">{{ current_user.name }}</div>
+                        <div class="text-[10px] text-slate-400 font-medium">{{ current_user.department }}</div>
+                        <span class="inline-block mt-1 px-1.5 py-0.5 rounded bg-slate-700 text-[8px] font-bold text-slate-300 uppercase">{{ current_user.role }}</span>
+                    </div>
+                </div>
+
+                <nav class="space-y-1">
+                    <a href="{{ url_for('ho.dashboard') }}" class="flex items-center space-x-3 p-3 rounded-xl transition-all {% if request.endpoint == 'ho.dashboard' %}bg-white/10 text-white{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">
+                        <i class="fa-solid fa-chart-line text-sm"></i>
+                        <span class="text-xs font-semibold">Dashboard</span>
+                    </a>
+                    <a href="{{ url_for('ho.event_approvals', status='Pending Approval') }}" class="flex items-center space-x-3 p-3 rounded-xl transition-all {% if request.args.get('status') == 'Pending Approval' %}bg-white/10 text-white{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">
+                        <i class="fa-solid fa-hourglass-start text-sm"></i>
+                        <span class="text-xs font-semibold">Pending Approvals</span>
+                    </a>
+                    <a href="{{ url_for('ho.event_approvals', status='Approved') }}" class="flex items-center space-x-3 p-3 rounded-xl transition-all {% if request.args.get('status') == 'Approved' %}bg-white/10 text-white{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">
+                        <i class="fa-solid fa-circle-check text-sm"></i>
+                        <span class="text-xs font-semibold">Approved Events</span>
+                    </a>
+                    <a href="{{ url_for('ho.event_approvals', status='Rejected') }}" class="flex items-center space-x-3 p-3 rounded-xl transition-all {% if request.args.get('status') == 'Rejected' %}bg-white/10 text-white{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">
+                        <i class="fa-solid fa-circle-xmark text-sm"></i>
+                        <span class="text-xs font-semibold">Rejected Events</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="mt-auto p-6 border-t border-slate-700/50">
+                <a href="{{ url_for('ho.logout') }}" class="flex items-center space-x-3 p-3 rounded-xl text-amber-500 hover:bg-amber-500/10 transition-all font-bold text-xs">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-10">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-6 p-4 rounded-2xl {% if category == 'error' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-emerald-50 text-emerald-700 border border-emerald-100{% endif %} text-sm font-medium">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="mb-10">
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">{% block header_title %}{% endblock %}</h2>
+                <p class="text-slate-500 text-sm mt-1">{% block header_subtitle %}{% endblock %}</p>
+            </div>
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
+ Joseph

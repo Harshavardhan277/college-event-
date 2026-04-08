@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Coordinator{% endblock %} - CEAM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Outfit', sans-serif; }
+        .sidebar-link.active {
+            background: rgba(79, 70, 229, 0.1);
+            color: #4f46e5;
+            border-right: 4px solid #4f46e5;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col fixed h-full z-10">
+        <!-- Club Info Header -->
+        <div class="p-6 border-b border-slate-100 flex flex-col items-center text-center">
+            <div class="w-20 h-20 rounded-2xl bg-indigo-50 flex items-center justify-center mb-3 overflow-hidden shadow-inner border border-slate-100">
+                {% if current_user.photo %}
+                    <img src="{{ url_for('static', filename='uploads/clubs/' + current_user.photo) }}" alt="Club Logo" class="w-full h-full object-cover">
+                {% else %}
+                    <i class="fa-solid fa-users-gear text-3xl text-indigo-500"></i>
+                {% endif %}
+            </div>
+            <h2 class="font-bold text-slate-900 leading-tight">{{ current_user.club_name | default('Unnamed Club') }}</h2>
+            <p class="text-xs text-slate-500 mt-1 flex items-center justify-center">
+                <i class="fa-solid fa-user-circle mr-1"></i>
+                {{ current_user.username }}
+            </p>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto py-4">
+            <div class="px-4 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Main Menu</div>
+            <a href="{{ url_for('clu.dashboard') }}" class="sidebar-link flex items-center px-6 py-3 text-slate-600 hover:bg-slate-50 transition-all {% if request.endpoint == 'clu.dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-chart-line w-6"></i>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a href="{{ url_for('clu.create_event') }}" class="sidebar-link flex items-center px-6 py-3 text-slate-600 hover:bg-slate-50 transition-all {% if request.endpoint == 'clu.create_event' %}active{% endif %}">
+                <i class="fa-solid fa-calendar-plus w-6"></i>
+                <span class="text-sm font-semibold">Create Event</span>
+            </a>
+            <a href="{{ url_for('clu.my_events') }}" class="sidebar-link flex items-center px-6 py-3 text-slate-600 hover:bg-slate-50 transition-all {% if request.endpoint == 'clu.my_events' %}active{% endif %}">
+                <i class="fa-solid fa-calendar-days w-6"></i>
+                <span class="text-sm font-semibold">My Events</span>
+            </a>
+            <a href="{{ url_for('clu.participants') }}" class="sidebar-link flex items-center px-6 py-3 text-slate-600 hover:bg-slate-50 transition-all {% if request.endpoint == 'clu.participants' %}active{% endif %}">
+                <i class="fa-solid fa-users w-6"></i>
+                <span class="text-sm font-semibold">Participants</span>
+            </a>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tools</div>
+            <a href="{{ url_for('clu.attendance_scanner') }}" class="sidebar-link flex items-center px-6 py-3 text-slate-600 hover:bg-slate-50 transition-all {% if request.endpoint == 'clu.attendance_scanner' %}active{% endif %}">
+                <i class="fa-solid fa-qrcode w-6"></i>
+                <span class="text-sm font-semibold">Attendance Scanner</span>
+            </a>
+            <a href="{{ url_for('clu.upload_certificates') }}" class="sidebar-link flex items-center px-6 py-3 text-slate-600 hover:bg-slate-50 transition-all {% if request.endpoint == 'clu.upload_certificates' %}active{% endif %}">
+                <i class="fa-solid fa-certificate w-6"></i>
+                <span class="text-sm font-semibold">Upload Certificates</span>
+            </a>
+            <a href="{{ url_for('clu.recruitment') }}" class="sidebar-link flex items-center px-6 py-3 text-slate-600 hover:bg-slate-50 transition-all {% if request.endpoint == 'clu.recruitment' %}active{% endif %}">
+                <i class="fa-solid fa-user-plus w-6"></i>
+                <span class="text-sm font-semibold">Recruitment</span>
+            </a>
+            <a href="{{ url_for('clu.helpers') }}" class="sidebar-link flex items-center px-6 py-3 text-slate-600 hover:bg-slate-50 transition-all {% if request.endpoint == 'clu.helpers' %}active{% endif %}">
+                <i class="fa-solid fa-handshake-angle w-6"></i>
+                <span class="text-sm font-semibold">Helper Requirements</span>
+            </a>
+        </nav>
+
+        <!-- Footer -->
+        <div class="p-4 border-t border-slate-100">
+            <a href="{{ url_for('clu.logout') }}" class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-all">
+                <i class="fa-solid fa-right-from-bracket w-6"></i>
+                <span class="text-sm font-bold">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 p-8">
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">{% block header_title %}Dashboard{% endblock %}</h1>
+                <p class="text-slate-500 text-sm">Welcome back, {{ current_user.username }}</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition-all">
+                    <i class="fa-solid fa-bell"></i>
+                </button>
+                <div class="h-10 w-px bg-slate-200 mx-2"></div>
+                <div class="flex items-center">
+                    <div class="text-right mr-3 hidden md:block">
+                        <p class="text-sm font-bold text-slate-900 leading-none">{{ current_user.username }}</p>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-1">{{ current_user.role }}</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-6 p-4 rounded-xl {% if category == 'error' %}bg-red-50 text-red-600{% else %}bg-green-50 text-green-600{% endif %} text-sm font-medium border {% if category == 'error' %}border-red-100{% else %}border-green-100{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

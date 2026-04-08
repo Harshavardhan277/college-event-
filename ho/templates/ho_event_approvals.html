@@ -1,0 +1,198 @@
+{% extends 'ho_layout.html' %}
+
+{% block title %}{{ current_status }} - HOD / Dean Portal{% endblock %}
+{% block header_title %}{{ current_status }}{% endblock %}
+{% block header_subtitle %}Review and manage event requests from various clubs.{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+    <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div class="flex space-x-2">
+            <a href="{{ url_for('ho.event_approvals', status='Pending Approval') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition-all {% if current_status == 'Pending Approval' %}bg-indigo-600 text-white shadow-lg shadow-indigo-100{% else %}bg-white border border-slate-200 text-slate-500 hover:bg-slate-50{% endif %}">Pending</a>
+            <a href="{{ url_for('ho.event_approvals', status='Approved') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition-all {% if current_status == 'Approved' %}bg-emerald-600 text-white shadow-lg shadow-emerald-100{% else %}bg-white border border-slate-200 text-slate-500 hover:bg-slate-50{% endif %}">Approved</a>
+            <a href="{{ url_for('ho.event_approvals', status='Rejected') }}" class="px-4 py-2 rounded-xl text-xs font-bold transition-all {% if current_status == 'Rejected' %}bg-rose-600 text-white shadow-lg shadow-rose-100{% else %}bg-white border border-slate-200 text-slate-500 hover:bg-slate-50{% endif %}">Rejected</a>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-slate-50/50 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                    <th class="px-8 py-5">Event Details</th>
+                    <th class="px-6 py-5">Club</th>
+                    <th class="px-6 py-5">Date</th>
+                    <th class="px-6 py-5">Fee</th>
+                    <th class="px-8 py-5 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for event in events %}
+                <tr class="hover:bg-slate-50/50 transition-all group">
+                    <td class="px-8 py-6">
+                        <div class="flex items-center space-x-4">
+                            {% if event.poster %}
+                            <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-slate-100">
+                                <img src="{{ url_for('static', filename='uploads/events/' + event.poster) }}" alt="Poster" class="w-full h-full object-cover">
+                            </div>
+                            {% else %}
+                            <div class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 shrink-0 border border-slate-100">
+                                <i class="fa-solid fa-image"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <div class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{{ event.title }}</div>
+                                <div class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{{ event.event_type }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6 font-semibold text-slate-700 text-sm">{{ event.club_name }}</td>
+                    <td class="px-6 py-6 text-sm text-slate-500">{{ event.event_date }}</td>
+                    <td class="px-6 py-6">
+                        <span class="px-2 py-1 bg-slate-100 rounded text-[10px] font-bold text-slate-600">{{ event.fee }}</span>
+                    </td>
+                    <td class="px-8 py-6 text-right space-x-2">
+                        <!-- VIEW BUTTON -->
+                        <button onclick="openModal('modal-{{ event.id }}')"
+                            class="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-lg hover:bg-indigo-600 hover:text-white transition-all">
+                            <i class="fa-solid fa-eye mr-1.5"></i> View
+                        </button>
+
+                        {% if current_status == 'Pending Approval' %}
+                        <a href="{{ url_for('ho.approve_event', event_id=event.id) }}" class="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-lg hover:bg-emerald-600 hover:text-white transition-all">
+                            <i class="fa-solid fa-check mr-1.5"></i> Approve
+                        </a>
+                        <a href="{{ url_for('ho.reject_event', event_id=event.id) }}" class="inline-flex items-center px-3 py-1.5 bg-rose-50 text-rose-700 text-[10px] font-bold rounded-lg hover:bg-rose-600 hover:text-white transition-all">
+                            <i class="fa-solid fa-xmark mr-1.5"></i> Reject
+                        </a>
+                        {% else %}
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ event.approval_status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <!-- ======= EVENT DETAIL MODAL ======= -->
+                <div id="modal-{{ event.id }}" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <!-- Modal Header -->
+                        <div class="flex items-start justify-between p-8 border-b border-slate-100">
+                            <div>
+                                <h2 class="text-xl font-extrabold text-slate-900">{{ event.title }}</h2>
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{{ event.category }} · {{ event.event_type }}</p>
+                            </div>
+                            <button onclick="closeModal('modal-{{ event.id }}')" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <!-- Modal Body -->
+                        <div class="p-8 space-y-6">
+                            <!-- Poster -->
+                            {% if event.poster %}
+                            <img src="{{ url_for('static', filename='uploads/events/' + event.poster) }}" alt="Poster"
+                                 class="w-full rounded-2xl border border-slate-100 object-contain max-h-[400px]">
+                            {% endif %}
+
+                            <!-- Description -->
+                            {% if event.description %}
+                            <div>
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Description</div>
+                                <p class="text-sm text-slate-700 leading-relaxed">{{ event.description }}</p>
+                            </div>
+                            {% endif %}
+
+                            <!-- Key Info Grid -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-slate-50 rounded-2xl p-4">
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Club</div>
+                                    <div class="text-sm font-bold text-slate-800">{{ event.club_name or '—' }}</div>
+                                </div>
+                                <div class="bg-slate-50 rounded-2xl p-4">
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Event Date</div>
+                                    <div class="text-sm font-bold text-slate-800">{{ event.event_date or '—' }}</div>
+                                </div>
+                                <div class="bg-slate-50 rounded-2xl p-4">
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Registration Period</div>
+                                    <div class="text-sm font-bold text-slate-800">{{ event.reg_start_date or '—' }} → {{ event.reg_end_date or '—' }}</div>
+                                </div>
+                                <div class="bg-slate-50 rounded-2xl p-4">
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Entry Fee</div>
+                                    <div class="text-sm font-bold text-slate-800">{{ event.fee or 'Free' }}</div>
+                                </div>
+                                <div class="bg-slate-50 rounded-2xl p-4">
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Max Participants</div>
+                                    <div class="text-sm font-bold text-slate-800">{{ event.max_participants or 'Unlimited' }}</div>
+                                </div>
+                                <div class="bg-slate-50 rounded-2xl p-4">
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Team Size / No. of Teams</div>
+                                    <div class="text-sm font-bold text-slate-800">
+                                        {{ event.team_size or '—' }} members / {{ event.no_of_teams or '—' }} teams
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Links -->
+                            <div class="flex flex-wrap gap-3">
+                                {% if event.whatsapp_link %}
+                                <a href="{{ event.whatsapp_link }}" target="_blank"
+                                   class="inline-flex items-center px-4 py-2 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-xl hover:bg-emerald-600 hover:text-white transition-all">
+                                    <i class="fa-brands fa-whatsapp mr-2"></i> WhatsApp Group
+                                </a>
+                                {% endif %}
+                                {% if event.google_form_link %}
+                                <a href="{{ event.google_form_link }}" target="_blank"
+                                   class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 text-xs font-bold rounded-xl hover:bg-blue-600 hover:text-white transition-all">
+                                    <i class="fa-solid fa-link mr-2"></i> Registration Form
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer Actions -->
+                        {% if current_status == 'Pending Approval' %}
+                        <div class="p-8 border-t border-slate-100 flex justify-end space-x-3">
+                            <a href="{{ url_for('ho.reject_event', event_id=event.id) }}"
+                               class="px-5 py-2.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-xl hover:bg-rose-600 hover:text-white transition-all">
+                                <i class="fa-solid fa-xmark mr-1.5"></i> Reject
+                            </a>
+                            <a href="{{ url_for('ho.approve_event', event_id=event.id) }}"
+                               class="px-5 py-2.5 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100">
+                                <i class="fa-solid fa-check mr-1.5"></i> Approve Event
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- ======= END MODAL ======= -->
+
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-8 py-20 text-center text-slate-400 italic text-sm">
+                        No events found in this category.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal JS -->
+<script>
+function openModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+// Close modal on backdrop click
+document.querySelectorAll('[id^="modal-"]').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) closeModal(this.id);
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'clu_layout.html' %}
+
+{% block title %}Helper Requirements{% endblock %}
+{% block header_title %}Event Helpers{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Creation Form -->
+    <div class="lg:col-span-1">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden sticky top-8">
+            <div class="p-6 bg-slate-900 border-b border-slate-800">
+                <h2 class="text-lg font-bold text-white">Post Helper Need</h2>
+                <p class="text-slate-400 text-xs mt-1">Request student volunteers for events</p>
+            </div>
+            <form action="{{ url_for('clu.helpers') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Event Name</label>
+                    <input type="text" name="event_name" required placeholder="e.g. Annual Tech Fest" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Role Description</label>
+                    <textarea name="role" required rows="3" placeholder="e.g. Stage management, Registration desk..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Helpers Needed</label>
+                        <input type="number" name="num_required" required placeholder="10" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Deadline</label>
+                        <input type="date" name="deadline" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">WhatsApp Join Link</label>
+                    <input type="url" name="whatsapp_link" required placeholder="https://chat.whatsapp.com/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Requirement Poster (Optional)</label>
+                    <input type="file" name="poster" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                </div>
+                <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all text-sm">
+ Joseph                    Post Requirement
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Active Requirements -->
+    <div class="lg:col-span-2 space-y-6">
+        <h3 class="text-xl font-bold text-slate-900">Active Helper Requests</h3>
+        {% for req in requirements %}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            {% if req.poster %}
+            <div class="h-40 overflow-hidden">
+                <img src="{{ url_for('static', filename='uploads/helpers/' + req.poster) }}" alt="Poster" class="w-full h-full object-cover">
+            </div>
+            {% endif %}
+            <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h4 class="text-lg font-bold text-slate-900">{{ req.event_name }}</h4>
+                    <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">{{ req.num_required }} Helpers Required</span>
+                </div>
+                <span class="px-2.5 py-1 bg-rose-50 text-rose-700 rounded-lg text-xs font-bold border border-rose-100">
+                    Apply by: {{ req.deadline }}
+                </span>
+            </div>
+            <p class="text-slate-600 text-sm mb-4 leading-relaxed">{{ req.role }}</p>
+            <div class="bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
+                <p class="text-xs text-slate-500">Students can join the WhatsApp group directly</p>
+                <a href="{{ req.whatsapp_link }}" target="_blank" class="px-6 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-all shadow-md shadow-emerald-50 flex items-center">
+                    <i class="fa-brands fa-whatsapp mr-2"></i> Join Group
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="bg-white p-12 rounded-3xl border-2 border-dashed border-slate-200 text-center text-slate-400">
+            <i class="fa-solid fa-handshake-angle text-4xl mb-4 opacity-20"></i>
+            <p class="italic text-sm">No active helper requests found.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

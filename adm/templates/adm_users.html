@@ -1,0 +1,86 @@
+{% extends 'adm_layout.html' %}
+
+{% block title %}Manage Users - Admin Pro{% endblock %}
+{% block header_title %}User Management{% endblock %}
+{% block header_subtitle %}Unified portal to monitor and control all system users.{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden">
+    <div class="p-10 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+        <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">Active Accounts</h3>
+        <span class="px-5 py-2 bg-indigo-50 text-indigo-700 text-[11px] font-bold rounded-full uppercase tracking-widest">{{ users|length }} Total Users</span>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-slate-50 text-[11px] uppercase font-extrabold text-slate-400 tracking-wider">
+                    <th class="px-10 py-6">User / Identity</th>
+                    <th class="px-6 py-6">Category</th>
+                    <th class="px-6 py-6">Context</th>
+                    <th class="px-6 py-6">Status</th>
+                    <th class="px-10 py-6 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for user in users %}
+                <tr class="hover:bg-slate-50/50 transition-all group">
+                    <td class="px-10 py-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all text-xs font-bold">
+                                {{ user.name[:1] }}
+                            </div>
+                            <div>
+                                <div class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{{ user.name }}</div>
+                                <div class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">@{{ user.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6 font-bold">
+                        <span class="px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest
+                            {% if user.category == 'Student' %}bg-rose-50 text-rose-600
+                            {% elif user.category == 'Club Head' %}bg-indigo-50 text-indigo-600
+                            {% else %}bg-amber-50 text-amber-600{% endif %}">
+                            {{ user.category }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="text-xs font-semibold text-slate-500">{{ user.extra }}</div>
+                        {% if user.email != '-' %}<div class="text-[10px] text-slate-300 font-medium">{{ user.email }}</div>{% endif %}
+                    </td>
+                    <td class="px-6 py-6">
+                        <span class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest {% if user.status == 'active' %}bg-emerald-50 text-emerald-600{% else %}bg-rose-50 text-rose-600{% endif %}">
+                            {{ user.status }}
+                        </span>
+                    </td>
+                    <td class="px-10 py-6 text-right space-x-1">
+                        <!-- View -->
+                        <a href="{{ url_for('adm.view_user', user_type=user.type, user_id=user.id) }}" class="inline-flex items-center p-2.5 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm" title="View Details">
+                            <i class="fa-solid fa-eye text-[12px]"></i>
+                        </a>
+                        
+                        <!-- Toggle Status (only for Students and Coordinators) -->
+                        {% if user.type in ['stu', 'cl'] %}
+                        <a href="{{ url_for('adm.toggle_user_status', user_type=user.type, user_id=user.id) }}" class="inline-flex items-center p-2.5 bg-slate-50 text-slate-400 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm" title="Toggle Access">
+                            <i class="fa-solid fa-power-off text-[12px]"></i>
+                        </a>
+                        {% endif %}
+
+                        <!-- Change Password -->
+                        <a href="{{ url_for('adm.change_password', user_type=user.type, user_id=user.id) }}" class="inline-flex items-center p-2.5 bg-slate-50 text-slate-400 rounded-xl hover:bg-amber-500 hover:text-white transition-all shadow-sm" title="Reset Password">
+                            <i class="fa-solid fa-key text-[12px]"></i>
+                        </a>
+
+                        <!-- Delete -->
+                        <a href="{{ url_for('adm.delete_user', user_type=user.type, user_id=user.id) }}" class="inline-flex items-center p-2.5 bg-rose-50 text-rose-400 rounded-xl hover:bg-rose-600 hover:text-white transition-all shadow-sm" onclick="return confirm('Permanently delete this account?')" title="Delete User">
+                            <i class="fa-solid fa-trash-can text-[12px]"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+ Joseph

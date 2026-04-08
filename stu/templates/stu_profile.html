@@ -1,0 +1,130 @@
+{% extends 'stu_layout.html' %}
+
+{% block student_content %}
+<div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div>
+            <h2 class="text-lg font-bold text-slate-900">My Profile</h2>
+            <p class="text-sm text-slate-500">Manage your personal information and contact details.</p>
+        </div>
+        <button type="button" onclick="toggleEdit()"
+            class="px-4 py-2 text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors border border-indigo-200">
+            Edit Profile
+        </button>
+    </div>
+
+    <form action="#" method="POST" class="p-6 space-y-8" id="profileForm">
+        <!-- Photo Upload (Visual Only) -->
+        <div class="flex items-center space-x-6">
+            <div
+                class="w-24 h-24 rounded-full bg-slate-100 border-4 border-white shadow-md overflow-hidden flex-shrink-0">
+                {% if current_user.photo %}
+                <img src="{{ current_user.photo }}" alt="Profile" class="w-full h-full object-cover">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center text-slate-400 font-bold text-3xl">
+                    {{ current_user.username[0] | upper }}
+                </div>
+                {% endif %}
+            </div>
+            <div class="profile-field disabled-field">
+                <label class="block text-sm font-medium text-slate-700 mb-2">Profile Photo</label>
+                <input type="file" disabled
+                    class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-colors">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Registration Number (Read Only) -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Register Number</label>
+                <input type="text" value="{{ current_user.register_number | default('N/A') }}" disabled
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 font-medium">
+            </div>
+
+            <!-- Full Name -->
+            <div class="profile-field disabled-field">
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Full Name</label>
+                <input type="text" name="name" value="{{ current_user.name | default('') }}" disabled
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:bg-slate-50 disabled:text-slate-500">
+            </div>
+
+            <!-- Department -->
+            <div class="profile-field disabled-field">
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Department</label>
+                <select name="department" disabled
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:bg-slate-50 disabled:text-slate-500">
+                    <option value="">Select Department</option>
+                    <option value="CSE" {% if current_user.department=='CSE' %}selected{% endif %}>Computer Science &
+                        Eng.</option>
+                    <option value="ECE" {% if current_user.department=='ECE' %}selected{% endif %}>Electronics & Comm.
+                    </option>
+                    <option value="MECH" {% if current_user.department=='MECH' %}selected{% endif %}>Mechanical Eng.
+                    </option>
+                </select>
+            </div>
+
+            <!-- Year -->
+            <div class="profile-field disabled-field">
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Year of Study</label>
+                <select name="year" disabled
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:bg-slate-50 disabled:text-slate-500">
+                    <option value="">Select Year</option>
+                    <option value="1" {% if current_user.year=='1' %}selected{% endif %}>First Year</option>
+                    <option value="2" {% if current_user.year=='2' %}selected{% endif %}>Second Year</option>
+                    <option value="3" {% if current_user.year=='3' %}selected{% endif %}>Third Year</option>
+                    <option value="4" {% if current_user.year=='4' %}selected{% endif %}>Fourth Year</option>
+                </select>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="profile-field disabled-field">
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Date of Birth</label>
+                <input type="date" name="dob" value="{{ current_user.dob | default('') }}" disabled
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:bg-slate-50 disabled:text-slate-500">
+            </div>
+
+            <!-- Mobile Number -->
+            <div class="profile-field disabled-field">
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Mobile Number</label>
+                <input type="tel" name="mobile" value="{{ current_user.mobile | default('') }}" disabled
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:bg-slate-50 disabled:text-slate-500">
+            </div>
+
+            <!-- WhatsApp Number -->
+            <div class="profile-field disabled-field">
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">WhatsApp Number</label>
+                <input type="tel" name="whatsapp" value="{{ current_user.whatsapp | default('') }}" disabled
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:bg-slate-50 disabled:text-slate-500">
+            </div>
+        </div>
+
+        <div class="flex justify-end pt-4 border-t border-slate-100 hidden" id="saveActionContainer">
+            <button type="submit"
+                class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 transition-all">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    let isEditing = false;
+    function toggleEdit() {
+        isEditing = !isEditing;
+        const inputs = document.querySelectorAll('#profileForm input:not([type="hidden"]):not([value="{{ current_user.register_number | default("N/A") }}"]), #profileForm select');
+        const saveContainer = document.getElementById('saveActionContainer');
+
+        inputs.forEach(input => {
+            if (input.value !== '{{ current_user.register_number | default("N/A") }}') {
+                input.disabled = !isEditing;
+            }
+        });
+
+        if (isEditing) {
+            saveContainer.classList.remove('hidden');
+        } else {
+            saveContainer.classList.add('hidden');
+        }
+    }
+</script>
+{% endblock %}

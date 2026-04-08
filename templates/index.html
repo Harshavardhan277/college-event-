@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CEAM - Choose Your Portal</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* BACKGROUND SLIDESHOW */
+
+        .slideshow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            background-size: cover;
+            background-position: center;
+
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* CARD STYLE */
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+
+</head>
+
+<body class="h-full flex flex-col relative">
+
+    <!-- BACKGROUND SLIDES -->
+
+    <div class="slideshow-container">
+
+        <div class="slide active"
+            style="background-image:url('https://images.unsplash.com/photo-1492538368677-f6e0afe31dcc?w=1600&q=80')">
+        </div>
+
+        <div class="slide"
+            style="background-image:url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1600&q=80')">
+        </div>
+
+        <div class="slide"
+            style="background-image:url('https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1600&q=80')">
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 relative z-10">
+
+        <div class="text-center mb-10 md:mb-16">
+
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight drop-shadow-lg">
+                Choose Your Portal
+            </h1>
+
+            <p class="mt-3 text-base md:text-lg text-white font-medium drop-shadow-md">
+                Select your role to access the management system
+            </p>
+
+        </div>
+
+        <!-- PORTAL CARDS -->
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 max-w-4xl w-full">
+
+            <!-- STUDENT -->
+
+            <a href="{{ url_for('stu.login') }}"
+                class="group glass-card p-6 md:p-10 rounded-3xl shadow-xl hover:bg-orange-600 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center text-center">
+
+                <div
+                    class="w-12 h-12 md:w-16 md:h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white">
+                    🎓
+                </div>
+
+                <h2 class="text-lg md:text-2xl font-bold text-slate-900 group-hover:text-white">
+                    Student
+                </h2>
+
+                <p class="text-slate-500 text-xs md:text-sm group-hover:text-orange-50">
+                    Events, Attendance & Certificates
+                </p>
+
+            </a>
+
+            <!-- CLUB HEAD -->
+
+            <a href="{{ url_for('clu.login') }}"
+                class="group glass-card p-6 md:p-10 rounded-3xl shadow-xl hover:bg-indigo-600 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center text-center">
+
+                <div
+                    class="w-12 h-12 md:w-16 md:h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white">
+                    👥
+                </div>
+
+                <h2 class="text-lg md:text-2xl font-bold text-slate-900 group-hover:text-white">
+                    Club Head
+                </h2>
+
+                <p class="text-slate-500 text-xs md:text-sm group-hover:text-indigo-50">
+                    Create & Manage Campus Events
+                </p>
+
+            </a>
+
+            <!-- DEAN / HOD -->
+
+            <a href="{{ url_for('ho.login') }}"
+                class="group glass-card p-6 md:p-10 rounded-3xl shadow-xl hover:bg-emerald-600 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center text-center">
+
+                <div
+                    class="w-12 h-12 md:w-16 md:h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white">
+                    🛡
+                </div>
+
+                <h2 class="text-lg md:text-2xl font-bold text-slate-900 group-hover:text-white">
+                    HOD/DEAN
+                </h2>
+
+                <p class="text-slate-500 text-xs md:text-sm group-hover:text-emerald-50">
+                    Review & Approve Event Proposals
+                </p>
+
+            </a>
+
+            <!-- ADMIN -->
+
+            <a href="{{ url_for('adm.login') }}"
+                class="group glass-card p-6 md:p-10 rounded-3xl shadow-xl hover:bg-slate-800 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center text-center">
+
+                <div
+                    class="w-12 h-12 md:w-16 md:h-16 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white">
+                    ⚙
+                </div>
+
+                <h2 class="text-lg md:text-2xl font-bold text-slate-900 group-hover:text-white">
+                    Admin
+                </h2>
+
+                <p class="text-slate-500 text-xs md:text-sm group-hover:text-slate-200">
+                    System Settings & Data Management
+                </p>
+
+            </a>
+
+        </div>
+
+        <!-- SYSTEM TITLE -->
+
+        <div class="mt-10 md:mt-12 text-center">
+
+            <h3 class="text-lg md:text-2xl font-bold text-white drop-shadow-lg">
+                College Event & Activity Management System
+            </h3>
+
+            <p class="text-white text-sm">
+                Kalasalingam Academy of Research and Education
+            </p>
+
+        </div>
+
+    </main>
+
+    <footer class="w-full py-4 text-center bg-black/40 border-t border-white/10 relative z-10 mt-auto">
+
+        <p class="text-white text-xs md:text-sm">
+            © 2026 College Event & Activity Management System. All rights reserved.
+        </p>
+
+    </footer>
+
+    <!-- SLIDESHOW SCRIPT -->
+
+    <script>
+
+        let slides = document.querySelectorAll(".slide");
+        let index = 0;
+
+        setInterval(() => {
+
+            slides[index].classList.remove("active");
+
+            index = (index + 1) % slides.length;
+
+            slides[index].classList.add("active");
+
+        }, 5000);
+
+    </script>
+
+</body>
+
+</html>

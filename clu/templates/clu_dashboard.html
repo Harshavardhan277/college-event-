@@ -1,0 +1,128 @@
+{% extends 'clu_layout.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block header_title %}Overview{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Stats Cards -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                <i class="fa-solid fa-calendar-check text-xl"></i>
+            </div>
+            <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider">Total Events</span>
+        </div>
+        <h3 class="text-3xl font-bold text-slate-900">{{ event_count }}</h3>
+        <p class="text-slate-500 text-xs mt-1">Events created by you</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
+                <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+            </div>
+            <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wider">Pending Approval</span>
+        </div>
+        <h3 class="text-3xl font-bold text-slate-900">{{ pending_events }}</h3>
+        <p class="text-slate-500 text-xs mt-1">Awaiting admin review</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                <i class="fa-solid fa-user-graduate text-xl"></i>
+            </div>
+            <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Total Reach</span>
+        </div>
+        <h3 class="text-3xl font-bold text-slate-900">0</h3>
+        <p class="text-slate-500 text-xs mt-1">Students reached</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Club Profile & Photo Upload -->
+    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-slate-900">Club Management</h2>
+            <i class="fa-solid fa-gear text-slate-400"></i>
+        </div>
+        
+        <div class="flex flex-col items-center">
+            <div class="relative group cursor-pointer mb-6">
+                <div class="w-32 h-32 rounded-3xl bg-slate-50 flex items-center justify-center overflow-hidden border-2 border-dashed border-slate-200 group-hover:border-indigo-400 transition-all">
+                    {% if current_user.photo %}
+                        <img src="{{ url_for('static', filename='uploads/clubs/' + current_user.photo) }}" alt="Club Logo" class="w-full h-full object-cover">
+                    {% else %}
+                        <i class="fa-solid fa-image text-3xl text-slate-300 group-hover:text-indigo-400"></i>
+                    {% endif %}
+                </div>
+                <!-- Photo Upload Trigger -->
+                <button onclick="document.getElementById('clubPhotoInput').click()" class="absolute -bottom-2 -right-2 w-10 h-10 bg-indigo-600 text-white rounded-xl shadow-lg border-4 border-white flex items-center justify-center hover:bg-indigo-700 transition-all">
+                    <i class="fa-solid fa-camera text-sm"></i>
+                </button>
+            </div>
+            
+            <form id="uploadForm" action="{{ url_for('clu.upload_photo') }}" method="POST" enctype="multipart/form-data" class="hidden">
+                <input type="file" id="clubPhotoInput" name="photo" accept="image/*" onchange="document.getElementById('uploadForm').submit()">
+            </form>
+
+            <div class="text-center w-full">
+                <h3 class="text-lg font-bold text-slate-900">{{ current_user.club_name | default('Set Club Name') }}</h3>
+                <p class="text-indigo-600 text-sm font-semibold mt-1">Official Coordinator: {{ current_user.username }}</p>
+                
+                <div class="mt-8 grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-2xl text-left">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Status</p>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                            Active
+                        </span>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl text-left">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Account ID</p>
+                        <p class="text-xs font-mono text-slate-600">{{ current_user.id }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+        <h2 class="text-xl font-bold text-slate-900 mb-6">Quick Actions</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a href="{{ url_for('clu.create_event') }}" class="p-6 bg-indigo-50 border border-indigo-100 rounded-2xl hover:bg-indigo-100 transition-all group text-left">
+                <div class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <h4 class="font-bold text-indigo-900">New Event</h4>
+                <p class="text-xs text-indigo-600/70 mt-1">Create a new activity</p>
+            </a>
+            
+            <a href="{{ url_for('clu.attendance_scanner') }}" class="p-6 bg-emerald-50 border border-emerald-100 rounded-2xl hover:bg-emerald-100 transition-all group text-left">
+                <div class="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <h4 class="font-bold text-emerald-900">Scan QR</h4>
+                <p class="text-xs text-emerald-600/70 mt-1">Mark attendance live</p>
+            </a>
+
+            <a href="{{ url_for('clu.recruitment') }}" class="p-6 bg-amber-50 border border-amber-100 rounded-2xl hover:bg-amber-100 transition-all group text-left">
+                <div class="w-10 h-10 bg-amber-600 text-white rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <h4 class="font-bold text-amber-900">Recruit</h4>
+                <p class="text-xs text-amber-600/70 mt-1">Post new positions</p>
+            </a>
+
+            <a href="{{ url_for('clu.upload_certificates') }}" class="p-6 bg-slate-50 border border-slate-200 rounded-2xl hover:bg-slate-100 transition-all group text-left">
+                <div class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+                    <i class="fa-solid fa-file-arrow-up"></i>
+                </div>
+                <h4 class="font-bold text-slate-900">Certificates</h4>
+                <p class="text-xs text-slate-500 mt-1">Bulk upload winners</p>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

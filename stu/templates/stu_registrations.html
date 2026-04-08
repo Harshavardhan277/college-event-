@@ -1,0 +1,71 @@
+{% extends 'stu_layout.html' %}
+
+{% block student_content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">My Registrations</h1>
+            <p class="text-sm text-slate-500 mt-1">Track the events you're signed up for.</p>
+        </div>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div class="divide-y divide-slate-100">
+            {% for item in registrations %}
+            <div class="p-6 flex flex-col md:flex-row md:items-center justify-between hover:bg-slate-50 transition-colors">
+                <div class="flex items-start space-x-4 mb-4 md:mb-0">
+                    <div class="w-16 h-16 rounded-xl bg-slate-100 flex-shrink-0 overflow-hidden border border-slate-200">
+                        {% if item.event.poster %}
+                        <img src="{{ url_for('static', filename='uploads/events/' + item.event.poster) }}"
+                            alt="Event" class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-indigo-50 text-indigo-200">
+                            <i class="fa-solid fa-image text-2xl"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2 mb-1">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded tracking-widest uppercase
+                                {% if item.reg.payment_status == 'Confirmed' %}bg-green-100 text-green-700
+                                {% elif item.reg.payment_status == 'Pending' %}bg-amber-100 text-amber-700
+                                {% else %}bg-blue-100 text-blue-700{% endif %}">
+                                {{ item.reg.payment_status }}
+                            </span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID: REG-{{ item.reg.id }}</span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-lg">{{ item.event.title }}</h3>
+                        <p class="text-sm font-medium text-slate-500">{{ item.event.event_date }} • {{ item.event.club_name }}</p>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full md:w-auto">
+                    {% if item.reg.payment_status == 'Pending' %}
+                    <a href="{{ url_for('stu.payment', reg_id=item.reg.id) }}"
+                        class="px-6 py-2.5 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 text-center">
+                        Pay Now
+                    </a>
+                    {% endif %}
+                    
+                    {% if item.event.whatsapp_link %}
+                    <a href="{{ item.event.whatsapp_link }}" target="_blank"
+                        class="px-4 py-2.5 bg-[#25D366] text-white font-bold text-sm rounded-xl hover:bg-[#1ebe5b] transition flex items-center justify-center shadow-lg shadow-green-100">
+                        <i class="fa-brands fa-whatsapp mr-2"></i> Join Group
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <!-- Empty State -->
+            <div class="p-12 flex flex-col items-center justify-center text-center">
+                <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900">No Registrations Yet</h3>
+                <p class="text-slate-500 mt-2 max-w-sm">You haven't registered for any upcoming events. Explore the events page to find something interesting!</p>
+                <a href="{{ url_for('stu.events') }}" class="mt-6 px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition">Browse Events</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

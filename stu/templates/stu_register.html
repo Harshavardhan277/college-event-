@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - CEAM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url("{{ url_for('static', filename='images/login_bgs/student_campus_bg.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .login-card {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-[440px]">
+        <div class="login-card p-8">
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm border border-indigo-100">
+                    <i class="fa-solid fa-user-plus text-indigo-600 text-xl"></i>
+                </div>
+                <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Create Account</h1>
+                <p class="text-slate-500 text-[10px] mt-1 uppercase tracking-widest font-semibold">Student Enrollment</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('stu.register') }}" class="space-y-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="p-3 bg-white/10 backdrop-blur-md rounded-xl text-sm font-semibold text-center
+                                {% if category == 'success' %}
+                                    bg-green-50/20 border border-green-200/50 text-green-100
+                                {% else %}
+                                    bg-red-50/20 border border-red-200/50 text-red-100
+                                {% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-700 ml-1">Reg Number</label>
+                        <input type="text" name="register_number" placeholder="22CS..." required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all outline-none bg-slate-50 text-sm font-medium">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-700 ml-1">College Email</label>
+                        <input type="email" name="email" placeholder="edu@mail" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all outline-none bg-slate-50 text-sm font-medium">
+                    </div>
+                </div>
+
+                <div id="otp-section" class="space-y-2">
+                    <div id="otp-input-group" class="hidden space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-700 ml-1">Enter OTP</label>
+                        <input type="text" name="otp" id="otp-input" maxlength="6" placeholder="------"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all outline-none bg-slate-50 text-center tracking-widest text-lg font-bold">
+                    </div>
+                    <button type="button" id="send-otp-btn"
+                        class="w-full py-3 px-4 bg-indigo-50 text-indigo-700 font-bold rounded-xl hover:bg-indigo-100 transition-all text-[11px] uppercase tracking-wider border border-indigo-100">
+                        Send Verification OTP
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-700 ml-1">Password</label>
+                        <input type="password" name="password" placeholder="••••••••" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all outline-none bg-slate-50 text-sm font-medium">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-700 ml-1">Confirm</label>
+                        <input type="password" name="confirm_password" placeholder="••••••••" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 transition-all outline-none bg-slate-50 text-sm font-medium">
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" disabled
+                    class="w-full py-3.5 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 transition-all transform active:scale-[0.98] text-[10px] uppercase tracking-widest disabled:opacity-50 mt-2">
+                    Complete Registration
+                </button>
+            </form>
+
+            <div class="mt-6 pt-5 border-t border-slate-100 text-center">
+                <p class="text-[11px] font-semibold text-slate-400">
+                    Already have an account?
+                    <a href="{{ url_for('stu.login') }}"
+                        class="text-indigo-600 hover:text-indigo-500 transition-colors">Sign In</a>
+                </p>
+            </div>
+        </div>
+        
+        <p class="text-center mt-6 text-white/40 text-[9px] font-bold uppercase tracking-widest">
+            &copy; 2026 CEAM • SECURE REGISTRATION
+        </p>
+    </div>
+
+    <script>
+        const sendOtpBtn = document.getElementById('send-otp-btn');
+        const otpInputGroup = document.getElementById('otp-input-group');
+        const submitBtn = document.getElementById('submit-btn');
+        const emailInput = document.querySelector('input[name="email"]');
+
+        sendOtpBtn.addEventListener('click', async () => {
+            const email = emailInput.value;
+            if (!email) {
+                alert("Please enter email first.");
+                return;
+            }
+
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.innerHTML = "Sending...";
+
+            try {
+                const response = await fetch("{{ url_for('auth.send_otp') }}", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: email })
+                });
+
+                if (response.ok) {
+                    sendOtpBtn.innerHTML = "OTP Sent ✓";
+                    otpInputGroup.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                } else {
+                    alert("Failed to send OTP.");
+                    sendOtpBtn.disabled = false;
+                    sendOtpBtn.innerHTML = "Send Verification OTP";
+                }
+            } catch (error) {
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.innerHTML = "Send Verification OTP";
+            }
+        });
+    </script>
+</body>
+</html>

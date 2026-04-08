@@ -1,0 +1,191 @@
+{% extends 'clu_layout.html' %}
+
+{% block title %}Create Event{% endblock %}
+{% block header_title %}New Event{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="bg-slate-900 px-8 py-6">
+            <h2 class="text-xl font-bold text-white">Event Details</h2>
+            <p class="text-slate-400 text-sm mt-1">Fill in the information to submit for approval</p>
+        </div>
+
+        <form action="{{ url_for('clu.create_event') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-8">
+            <!-- Basic Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Event Title</label>
+                    <input type="text" name="title" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. Innovate 2026">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Club Name</label>
+                    <input type="text" name="club_name" value="{{ current_user.club_name }}" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 outline-none" readonly>
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Category</label>
+                    <select name="category" id="categorySelect" required onchange="toggleCategoryNumber()" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none appearance-none">
+                        <option value="Group 2">Group 2</option>
+                        <option value="Group 3">Group 3</option>
+                        <option value="EE">EE</option>
+                        <option value="PE">PE</option>
+                        <option value="UE">UE</option>
+                    </select>
+                </div>
+                <div id="categoryNumberBox" class="hidden">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Category Credits/Number</label>
+                    <input type="number" name="category_number" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Enter number">
+                </div>
+            </div>
+
+            <!-- Dates & Description -->
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">Description</label>
+                <textarea name="description" required rows="4" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="What is this event about?"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Reg Start Date</label>
+                    <input type="date" name="reg_start_date" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Reg End Date</label>
+                    <input type="date" name="reg_end_date" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Event Date</label>
+                    <input type="date" name="event_date" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Fee (₹)</label>
+                    <input type="number" name="fee" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="0 for free">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Participation Type</label>
+                    <select name="event_type" id="typeSelect" required onchange="toggleTypeFields()" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <option value="Individual">Individual</option>
+                        <option value="Team">Team</option>
+                    </select>
+                </div>
+                <div id="individualField">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Max Participants</label>
+                    <input type="number" name="max_participants" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. 100">
+                </div>
+            </div>
+
+            <div id="teamFields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Team Size</label>
+                    <input type="number" name="team_size" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Members per team">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Number of Teams</label>
+                    <input type="number" name="no_of_teams" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Total available team slots">
+                </div>
+            </div>
+
+            <!-- Links & Media -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">WhatsApp Group Link</label>
+                    <input type="url" name="whatsapp_link" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://chat.whatsapp.com/...">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Google Form Link</label>
+                    <input type="url" name="google_form_link" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://forms.gle/...">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Payment QR Code Upload</label>
+                    <div class="flex items-center justify-center w-full">
+                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-2xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-all">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="fa-solid fa-qrcode text-slate-400 text-2xl mb-2"></i>
+                                <p class="mb-2 text-xs text-slate-500"><span class="font-bold">Payment QR</span></p>
+                            </div>
+                            <input type="file" name="payment_qr" class="hidden" accept="image/*" />
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Event Poster Upload</label>
+                    <div class="flex items-center justify-center w-full">
+                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-emerald-300 border-dashed rounded-2xl cursor-pointer bg-emerald-50/30 hover:bg-emerald-50 transition-all">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="fa-solid fa-image text-emerald-400 text-2xl mb-2"></i>
+                                <p class="mb-2 text-xs text-emerald-500"><span class="font-bold">Event Poster</span></p>
+                            </div>
+                            <input type="file" name="poster" class="hidden" accept="image/*" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approval -->
+            <div class="bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100">
+                <h3 class="font-bold text-indigo-900 mb-4 flex items-center">
+                    <i class="fa-solid fa-shield-halved mr-2"></i> Approval Workflow
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-2">Permission Approver 1 (Mandatory)</label>
+                        <select name="approver_1" required class="w-full px-4 py-3 rounded-xl border border-indigo-200 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="">Select Approver</option>
+                            <option value="HOD">HOD</option>
+                            <option value="Dean">Dean</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-2">Permission Approver 2 (Optional)</label>
+                        <select name="approver_2" class="w-full px-4 py-3 rounded-xl border border-indigo-200 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="">None</option>
+                            <option value="HOD">HOD</option>
+                            <option value="Dean">Dean</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 transform active:scale-[0.99] transition-all">
+                Submit Event for Approval
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleCategoryNumber() {
+        const select = document.getElementById('categorySelect');
+        const box = document.getElementById('categoryNumberBox');
+        if (['EE', 'PE', 'UE'].includes(select.value)) {
+            box.classList.remove('hidden');
+        } else {
+            box.classList.add('hidden');
+        }
+    }
+
+    function toggleTypeFields() {
+        const select = document.getElementById('typeSelect');
+        const teamFields = document.getElementById('teamFields');
+        const individualField = document.getElementById('individualField');
+        
+        if (select.value === 'Team') {
+            teamFields.classList.remove('hidden');
+            individualField.classList.add('hidden');
+        } else {
+            teamFields.classList.add('hidden');
+            individualField.classList.remove('hidden');
+        }
+    }
+</script>
+{% endblock %}
