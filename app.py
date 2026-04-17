@@ -57,5 +57,5 @@ app.register_blueprint(ho_bp, url_prefix="/ho")
 def index():
     return render_template("index.html")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+def handler(request):
+    return app(request.environ, lambda *args: None)
