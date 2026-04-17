@@ -9,8 +9,18 @@ app = Flask(__name__)
 # Secret Key
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "fallback_secret_key_12345")
 
-# ✅ FIXED DATABASE (use SQLite for Vercel testing)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
+# ✅ DATABASE CONFIGURATION (PostgreSQL for production, SQLite for local)
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    # Render provides DATABASE_URL in postgresql:// format
+    # SQLAlchemy 2.0+ requires postgresql+psycopg2://
+    if database_url.startswith("postgresql://"):
+        database_url = database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+else:
+    # Fallback to SQLite for local development
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Email Configuration
@@ -29,8 +39,8 @@ bcrypt.init_app(app)
 login_manager.init_app(app)
 mail.init_app(app)
 
-# ✅ SAFE DB CREATE (avoid crash on Vercel)
-if os.environ.get("VERCEL") != "1":
+# ✅ SAFE DB CREATE (avoid crash on startup)
+if os.environ.get("RENDER") != "1":
     with app.app_context():
         db.create_all()
         from seeding_utils import ensure_demo_accounts
@@ -59,6 +69,5 @@ app.register_blueprint(ho_bp, url_prefix="/ho")
 def index():
     return render_template("index.html")
 
-# ✅ REQUIRED FOR VERCEL
-def handler(request):
-    return app(request.environ, lambda *args: None)
+if __name__ == "__main__":
+    app.run()
