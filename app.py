@@ -39,6 +39,9 @@ bcrypt.init_app(app)
 login_manager.init_app(app)
 mail.init_app(app)
 
+# Import models before create_all so SQLAlchemy metadata includes all tables.
+from models import Admin, AttendanceLog, Certificate, Club, Coordinator, Event, HelperRequirement, HodDean, Registration, Recruitment, User
+
 # Ensure database tables exist before handling requests.
 with app.app_context():
     db.create_all()
