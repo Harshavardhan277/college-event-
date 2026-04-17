@@ -96,9 +96,21 @@ def dashboard():
                            participation_count=participation_count,
                            upcoming_events=upcoming_events)
 
-@stu_bp.route("/profile")
+@stu_bp.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
+    if request.method == "POST":
+        current_user.name = request.form.get("name", "").strip() or None
+        current_user.department = request.form.get("department", "").strip() or None
+        current_user.year = request.form.get("year", "").strip() or None
+        current_user.dob = request.form.get("dob", "").strip() or None
+        current_user.mobile = request.form.get("mobile", "").strip() or None
+        current_user.whatsapp = request.form.get("whatsapp", "").strip() or None
+
+        db.session.commit()
+        flash("Profile updated successfully.", "success")
+        return redirect(url_for("stu.profile"))
+
     return render_template("stu_profile.html")
 
 @stu_bp.route("/events")
