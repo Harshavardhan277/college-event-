@@ -39,12 +39,11 @@ bcrypt.init_app(app)
 login_manager.init_app(app)
 mail.init_app(app)
 
-# ✅ SAFE DB CREATE (avoid crash on startup)
-if os.environ.get("RENDER") != "1":
-    with app.app_context():
-        db.create_all()
-        from seeding_utils import ensure_demo_accounts
-        ensure_demo_accounts()
+# Ensure database tables exist before handling requests.
+with app.app_context():
+    db.create_all()
+    from seeding_utils import ensure_demo_accounts
+    ensure_demo_accounts()
 
 login_manager.login_view = "index"
 login_manager.login_message_category = "info"
