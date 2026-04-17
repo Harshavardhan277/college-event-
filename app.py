@@ -13,9 +13,9 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "fallback_secret_key_123
 database_url = os.environ.get("DATABASE_URL")
 if database_url:
     # Render provides DATABASE_URL in postgresql:// format
-    # SQLAlchemy 2.0+ requires postgresql+psycopg2://
+    # Use pg8000 driver to avoid native psycopg2 binary issues on newer Python.
     if database_url.startswith("postgresql://"):
-        database_url = database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+        database_url = database_url.replace("postgresql://", "postgresql+pg8000://", 1)
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 else:
     # Fallback to SQLite for local development
