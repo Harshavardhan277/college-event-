@@ -1,10 +1,13 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session, current_app
 from flask_login import login_user, logout_user, current_user, login_required
 from models import User, Registration, Event
 from extensions import db, bcrypt
 from utils import generate_qr_code
 from email_utils import send_registration_confirmation_email
 import time
+import os
+from datetime import datetime
+from werkzeug.utils import secure_filename
 
 stu_bp = Blueprint("stu", __name__, template_folder="templates")
 
@@ -100,6 +103,23 @@ def dashboard():
 @login_required
 def profile():
     if request.method == "POST":
+        photo_file = request.files.get("photo")
+        if photo_file and photo_file.filename:
+            allowed_exts = {"png", "jpg", "jpeg", "gif", "webp"}
+            ext = photo_file.filename.rsplit(".", 1)[-1].lower() if "." in photo_file.filename else ""
+
+            if ext not in allowed_exts:
+                flash("Invalid photo format. Please upload PNG, JPG, JPEG, GIF, or WEBP.", "error")
+                return redirect(url_for("stu.profile"))
+
+            filename = secure_filename(
+                f"student_{current_user.id}_{datetime.now().strftime('%Y%m%d%H%M%S')}.{ext}"
+            )
+            upload_folder = os.path.join(current_app.root_path, "static", "uploads", "students")
+            os.makedirs(upload_folder, exist_ok=True)
+            photo_file.save(os.path.join(upload_folder, filename))
+            current_user.photo = filename
+
         current_user.name = request.form.get("name", "").strip() or None
         current_user.department = request.form.get("department", "").strip() or None
         current_user.year = request.form.get("year", "").strip() or None
@@ -124,7 +144,23 @@ def events():
     enriched_events = []
     for event in events_list:
         reg_count = Registration.query.filter_by(event_id=event.id).count()
-        derived_limit = event.max_participants or event.no_of_teams
+        event_type = (event.event_type or "").strip().lower()
+        if event_type == "team":
+            derived_limit = event.no_of_teams or event.max_participants
+        else:
+            derived_limit = event.max_participants
+
+        category_raw = (event.category or "").strip()
+        category_upper = category_raw.upper()
+        if category_upper in {"EE", "EE CREDITS"}:
+            category_filter = "EE"
+        elif category_upper in {"GROUP 2", "GROUP2"}:
+            category_filter = "Group 2"
+        elif category_upper in {"GROUP 3", "GROUP3"}:
+            category_filter = "Group 3"
+        else:
+            category_filter = category_raw
+
         capacity = event.available_seats if event.available_seats is not None else derived_limit
         if capacity is None:
             slots_remaining = "∞"
@@ -143,6 +179,7 @@ def events():
             "fee": event.fee,
             "poster": event.poster,
             "whatsapp_link": event.whatsapp_link,
+            "category_filter": category_filter,
             "slots_remaining": slots_remaining,
             "is_full": is_full,
             "is_registered": event.id in user_reg_ids
@@ -167,7 +204,12 @@ def register_event(event_id):
         flash("Sorry, this event is already full!", "error")
         return redirect(url_for("stu.events"))
     elif event.available_seats is None:
-        derived_limit = event.max_participants or event.no_of_teams
+        event_type = (event.event_type or "").strip().lower()
+        if event_type == "team":
+            derived_limit = event.no_of_teams or event.max_participants
+        else:
+            derived_limit = event.max_participants
+
         if derived_limit is not None:
             reg_count = Registration.query.filter_by(event_id=event.id).count()
             if reg_count >= derived_limit:

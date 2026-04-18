@@ -33,7 +33,7 @@
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Category</p>
                 <div class="flex flex-wrap gap-2" id="categoryFilter">
                     <button onclick="setFilter('category', 'all')" class="cat-btn active px-4 py-1.5 rounded-full font-bold text-sm shadow-sm transition-all border border-transparent bg-slate-900 text-white">All</button>
-                    <button onclick="setFilter('category', 'EE Credits')" class="cat-btn px-4 py-1.5 rounded-full font-bold text-sm bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 transition-all">EE Credits</button>
+                    <button onclick="setFilter('category', 'EE')" class="cat-btn px-4 py-1.5 rounded-full font-bold text-sm bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 transition-all">EE</button>
                     <button onclick="setFilter('category', 'Group 2')" class="cat-btn px-4 py-1.5 rounded-full font-bold text-sm bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 transition-all">Group 2</button>
                     <button onclick="setFilter('category', 'Group 3')" class="cat-btn px-4 py-1.5 rounded-full font-bold text-sm bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 transition-all">Group 3</button>
                 </div>
@@ -45,7 +45,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="eventsGrid">
         {% for event in events %}
         <div class="event-card bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow flex flex-col md:flex-row relative" 
-             data-category="{{ event.category | default('Experimental') }}"
+               data-category="{{ event.category_filter | default(event.category | default('Experimental')) }}"
              data-status="{{ event.status | default('Upcoming') }}">
             
             <!-- Concept-Match Seat Badge (Top Left Sticker) -->
