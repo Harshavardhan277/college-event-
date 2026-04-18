@@ -162,6 +162,11 @@ def create_event():
             "created_at":       datetime.now()
         }
 
+        # For team-based events, use number of teams as registration cap
+        # when max participants is not explicitly provided.
+        if event_data["max_participants"] is None and event_data["no_of_teams"]:
+            event_data["max_participants"] = event_data["no_of_teams"]
+
         Event.create_event(event_data)
         flash("✅ Event created successfully and sent for approval!", "success")
         return redirect(url_for("clu.my_events"))

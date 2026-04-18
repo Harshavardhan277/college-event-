@@ -124,6 +124,15 @@ def events():
     enriched_events = []
     for event in events_list:
         reg_count = Registration.query.filter_by(event_id=event.id).count()
+        derived_limit = event.max_participants or event.no_of_teams
+        capacity = event.available_seats if event.available_seats is not None else derived_limit
+        if capacity is None:
+            slots_remaining = "∞"
+            is_full = False
+        else:
+            slots_remaining = max(0, capacity - reg_count) if event.available_seats is None else max(0, capacity)
+            is_full = (capacity <= 0) if event.available_seats is not None else (reg_count >= capacity)
+
         event_dict = {
             "id": event.id,
             "title": event.title,
@@ -134,8 +143,8 @@ def events():
             "fee": event.fee,
             "poster": event.poster,
             "whatsapp_link": event.whatsapp_link,
-            "slots_remaining": event.available_seats if event.available_seats is not None else max(0, (event.max_participants or 100) - reg_count),
-            "is_full": (event.available_seats == 0) if event.available_seats is not None else (reg_count >= (event.max_participants or 100)),
+            "slots_remaining": slots_remaining,
+            "is_full": is_full,
             "is_registered": event.id in user_reg_ids
         }
         enriched_events.append(event_dict)
@@ -157,6 +166,13 @@ def register_event(event_id):
     if event.available_seats is not None and event.available_seats <= 0:
         flash("Sorry, this event is already full!", "error")
         return redirect(url_for("stu.events"))
+    elif event.available_seats is None:
+        derived_limit = event.max_participants or event.no_of_teams
+        if derived_limit is not None:
+            reg_count = Registration.query.filter_by(event_id=event.id).count()
+            if reg_count >= derived_limit:
+                flash("Sorry, registration is closed for this event!", "error")
+                return redirect(url_for("stu.events"))
 
     # Create a pending registration
     fee_str = str(event.fee).replace('.','',1) if event.fee else "0"
