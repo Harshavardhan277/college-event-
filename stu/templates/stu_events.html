@@ -58,8 +58,22 @@
 
             <div class="w-full md:w-48 h-48 md:h-auto bg-slate-100 flex-shrink-0 relative">
                 {% if event.poster %}
+                <div class="poster-fallback hidden w-full h-full items-center justify-center bg-indigo-50">
+                    <i class="fa-solid fa-calendar-days text-3xl text-indigo-200"></i>
+                </div>
+                {% if event.poster.startswith('http://') or event.poster.startswith('https://') or event.poster.startswith('/static/') %}
+                <img src="{{ event.poster }}"
+                    alt="{{ event.title }}" class="w-full h-full object-cover"
+                    onerror="this.classList.add('hidden'); this.previousElementSibling.classList.remove('hidden'); this.previousElementSibling.classList.add('flex');">
+                {% elif event.poster.startswith('uploads/') %}
+                <img src="{{ url_for('static', filename=event.poster) }}"
+                    alt="{{ event.title }}" class="w-full h-full object-cover"
+                    onerror="this.classList.add('hidden'); this.previousElementSibling.classList.remove('hidden'); this.previousElementSibling.classList.add('flex');">
+                {% else %}
                 <img src="{{ url_for('static', filename='uploads/events/' + event.poster) }}"
-                    alt="{{ event.title }}" class="w-full h-full object-cover">
+                    alt="{{ event.title }}" class="w-full h-full object-cover"
+                    onerror="this.classList.add('hidden'); this.previousElementSibling.classList.remove('hidden'); this.previousElementSibling.classList.add('flex');">
+                {% endif %}
                 {% else %}
                 <div class="w-full h-full flex items-center justify-center bg-indigo-50">
                     <i class="fa-solid fa-calendar-days text-3xl text-indigo-200"></i>
